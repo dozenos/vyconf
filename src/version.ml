@@ -1,6 +1,6 @@
 let version = "0.0.1"
 
-let copyright = "2016, VyOS maintainers and contributors"
+let copyright = "2016, DozenOS maintainers and contributors"
 
 let license = "LGPL version 2 or later with OCaml linking exception"
 
