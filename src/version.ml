@@ -8,7 +8,6 @@ let version_info () =
     let tmpl =
       "VyConf version: %s\n" ^^
       "Copyright %s\n\n" ^^
-      "Modifications Copyright DozenOS Contributors. See git history for details.
       "This program is free software, you can use, modify, and redistribute it\n" ^^
       "under the terms of %s\n"
     in Printf.sprintf tmpl version copyright license
