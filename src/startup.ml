@@ -1,0 +1,140 @@
+(** Various "housekeeping" functions *)
+
+(** Log msg as fatal and exit immediately *)
+let panic msg =
+    Lwt_log.fatal msg |> Lwt.ignore_result;
+    exit 1
+
+let log_info msg = Lwt_log.info msg |> Lwt.ignore_result; ()
+
+
+(** Setup the default logger *)
+let setup_logger daemonize log_file template =
+    (** 
+       If log file is specified, log to the file whether we are a daemon or not
+       If we are a daemon and log file is not specified, log to syslog
+       If we are not a daemon and log file is not specified, log to stderr
+     *)
+    match log_file with
+    | None ->
+        if daemonize then
+            begin
+                Lwt_log.default := Lwt_log.syslog ~template:template ~facility:`Daemon ();
+                Lwt.return_unit
+            end
+        else 
+            begin
+                Lwt_log.default := Lwt_log.channel ~template:template ~close_mode:`Keep ~channel:Lwt_io.stderr ();
+                Lwt.return_unit
+            end
+    | Some file ->
+        let%lwt l = Lwt_log.file ~template:template ~mode:`Append ~file_name:file () in
+        Lwt_log.default := l; Lwt.return_unit
+
+(** Load the config file or panic if it fails *)
+let load_daemon_config path =
+    let result = Vyconf_config.load path in
+    match result with
+    | Ok cfg -> cfg
+    | Error err ->
+        panic (Printf.sprintf "Could not load the configuration file %s" err)
+
+(** Check if appliance directories exist and panic if they don't *)
+let check_dirs dirs =
+    let res = Directories.test dirs in
+    match res with
+    | Ok _ -> ()
+    | Error err -> panic err
+
+let check_validators_dir dirs =
+    let res = Directories.test_validators_dir dirs in
+    match res with
+    | Ok _ -> ()
+    | Error err -> panic err
+
+let delete_socket_if_exists sockfile =
+    try
+        let _ = Unix.stat sockfile in
+        Unix.unlink sockfile
+    with
+    | Unix.Unix_error (Unix.ENOENT, _, _) -> ()
+    | _ -> panic "Could not delete old socket file, exiting"
+
+(** Bind to a UNIX socket *)
+let create_socket sockfile =
+    let open Lwt_unix in
+    let () = delete_socket_if_exists sockfile in
+    let backlog = 10 in
+    let%lwt sock = socket PF_UNIX SOCK_STREAM 0 |> Lwt.return in
+    let%lwt () = Lwt_unix.bind sock @@ ADDR_UNIX(sockfile) in
+    let%lwt () = Lwt_unix.chmod sockfile 0o775 in
+    listen sock backlog;
+    Lwt.return sock
+
+(** Create the server loop function *)
+let create_server accept_connection sock =
+    let open Lwt in
+    let rec serve () =
+        Lwt_unix.accept sock >>= accept_connection >>= serve
+    in serve
+
+(** Load the appliance configuration file or the fallback config *)
+let load_config_failsafe main fallback =
+    let res = Dozenos1x.Config_file.load_config main in
+    match res with
+    | Ok config -> config
+    | Error msg -> 
+        Lwt_log.error
+          (Printf.sprintf "Failed to load config file %s: %s. Attempting to load fallback config %s" main msg fallback) |>
+          Lwt.ignore_result;
+        let res = Dozenos1x.Config_file.load_config fallback in
+        begin
+            match res with
+            | Ok config -> config
+            | Error msg -> panic (Printf.sprintf "Failed to load fallback config %s: %s, exiting" fallback msg)
+        end
+
+module IC = Dozenos1x.Internal.Make(Dozenos1x.Config_tree)
+
+let load_config_cache cache_file =
+    (* alert exn Internal.read_internal:
+        [Internal.Read_error] caught
+     *)
+    try
+        let cached_config = (IC.read_internal[@alert "-exn"]) cache_file in
+        log_info @@ Printf.sprintf "Reading active config from %s" cache_file;
+        Ok cached_config
+    with Dozenos1x.Internal.Read_error msg ->
+        Error (Printf.sprintf "Failed to load active config %s: %s, exiting" cache_file msg)
+
+(* Load interface definitions from a directory into a reference tree *)
+let load_interface_definitions dir =
+    (* alert exn Reference_tree.load_from_xml:
+        [Reference_tree.Bad_interface_definition] caught
+     *)
+    let open Dozenos1x.Reference_tree in
+    let relative_paths = FileUtil.ls dir in
+    let absolute_paths =
+        try Ok (List.map Dozenos1x.Util.absolute_path relative_paths)
+        with Sys_error no_dir_msg -> Error no_dir_msg
+    in
+    let load_aux tree file =
+        log_info @@ Printf.sprintf "Loading interface definitions from %s" file;
+        (load_from_xml[@alert "-exn"]) tree file
+    in
+    try begin match absolute_paths with
+        | Ok paths  -> Ok (List.fold_left load_aux default paths)
+        | Error msg -> Error msg end
+    with Bad_interface_definition msg -> Error msg
+
+module IR = Dozenos1x.Internal.Make(Dozenos1x.Reference_tree)
+
+let read_reference_tree file =
+    (* alert exn Internal.read_internal:
+        [Internal.Read_error] caught
+     *)
+    try
+        let reftree = (IR.read_internal[@alert "-exn"]) file in
+        log_info @@ Printf.sprintf "Reading interface definitions from %s" file;
+        Ok reftree
+    with Dozenos1x.Internal.Read_error msg -> Error msg

@@ -1,0 +1,16 @@
+*.annot
+*.cmo
+*.cma
+*.cmi
+*.a
+*.o
+*.cmx
+*.cmxs
+*.cmxa
+*.mllib
+*.mldylib
+*.rej
+.ocp-indent
+_build/*
+*.merlin
+*.install

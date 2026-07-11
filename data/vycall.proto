@@ -1,0 +1,23 @@
+message Status {
+    required bool success = 1;
+    required string out = 2;
+}
+
+message Call {
+    required string script_name = 1;
+    optional string tag_value = 2;
+    optional string arg_value = 3;
+    optional Status reply = 4;
+}
+
+message Commit {
+    required string session_id = 1;
+    required int32 session_pid = 2;
+    required string sudo_user = 3;
+    required string user = 4;
+    required bool dry_run = 5;
+    required bool atomic = 6;
+    required bool background = 7;
+    optional Status init = 8;
+    repeated Call calls = 9;
+}

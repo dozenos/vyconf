@@ -1,0 +1,999 @@
+
+(** Code for vyconf.proto *)
+
+(* generated from "data/vyconf.proto", do not edit *)
+
+
+
+(** {2 Types} *)
+
+type request_config_format =
+  | Curly 
+  | Json 
+
+type request_output_format =
+  | Out_plain 
+  | Out_json 
+
+type request_prompt = unit
+
+type request_setup_session = {
+  client_pid : int32;
+  client_application : string option;
+  on_behalf_of : int32 option;
+  client_user : string option;
+  client_sudo_user : string option;
+}
+
+type request_session_of_pid = {
+  client_pid : int32;
+}
+
+type request_session_exists = {
+  dummy : int32 option;
+}
+
+type request_get_config = {
+  dummy : int32 option;
+}
+
+type request_teardown = {
+  on_behalf_of : int32 option;
+}
+
+type request_validate = {
+  path : string list;
+  output_format : request_output_format option;
+}
+
+type request_set = {
+  path : string list;
+}
+
+type request_delete = {
+  path : string list;
+}
+
+type request_aux_set = {
+  path : string list;
+  script_name : string;
+  tag_value : string option;
+}
+
+type request_aux_delete = {
+  path : string list;
+  script_name : string;
+  tag_value : string option;
+}
+
+type request_discard = {
+  dummy : int32 option;
+}
+
+type request_session_changed = {
+  dummy : int32 option;
+}
+
+type request_copy = {
+  source : string list;
+  destination : string list;
+}
+
+type request_rename = {
+  source : string list;
+  destination : string list;
+}
+
+type request_comment = {
+  path : string list;
+  comment : string;
+}
+
+type request_commit = {
+  confirm : bool option;
+  confirm_timeout : int32 option;
+  comment : string option;
+  dry_run : bool option;
+}
+
+type request_rollback = {
+  revision : int32;
+}
+
+type request_load = {
+  location : string;
+  cached : bool;
+  format : request_config_format option;
+}
+
+type request_merge = {
+  location : string;
+  destructive : bool;
+  format : request_config_format option;
+}
+
+type request_save = {
+  location : string;
+  format : request_config_format option;
+}
+
+type request_show_config = {
+  path : string list;
+  format : request_config_format option;
+}
+
+type request_exists = {
+  path : string list;
+}
+
+type request_get_value = {
+  path : string list;
+  output_format : request_output_format option;
+}
+
+type request_get_values = {
+  path : string list;
+  output_format : request_output_format option;
+}
+
+type request_list_children = {
+  path : string list;
+  output_format : request_output_format option;
+}
+
+type request_run_op_mode = {
+  path : string list;
+  output_format : request_output_format option;
+}
+
+type request_confirm = unit
+
+type request_enter_configuration_mode = {
+  exclusive : bool;
+  override_exclusive : bool;
+}
+
+type request_exit_configuration_mode = unit
+
+type request_reload_reftree = {
+  on_behalf_of : int32 option;
+}
+
+type request_show_sessions = {
+  exclude_self : bool;
+  exclude_other : bool;
+}
+
+type request_set_edit_level = {
+  path : string list;
+}
+
+type request_set_edit_level_up = {
+  dummy : int32 option;
+}
+
+type request_reset_edit_level = {
+  dummy : int32 option;
+}
+
+type request_get_edit_level = {
+  dummy : int32 option;
+}
+
+type request_edit_level_root = {
+  dummy : int32 option;
+}
+
+type request_config_unsaved = {
+  file : string option;
+}
+
+type request_reference_path_exists = {
+  path : string list;
+}
+
+type request_get_path_type = {
+  path : string list;
+  legacy_format : bool;
+}
+
+type request_get_completion_env = {
+  path : string list;
+  legacy_format : bool;
+}
+
+type request =
+  | Prompt
+  | Setup_session of request_setup_session
+  | Set of request_set
+  | Delete of request_delete
+  | Rename of request_rename
+  | Copy of request_copy
+  | Comment of request_comment
+  | Commit of request_commit
+  | Rollback of request_rollback
+  | Merge of request_merge
+  | Save of request_save
+  | Show_config of request_show_config
+  | Exists of request_exists
+  | Get_value of request_get_value
+  | Get_values of request_get_values
+  | List_children of request_list_children
+  | Run_op_mode of request_run_op_mode
+  | Confirm
+  | Enter_configuration_mode of request_enter_configuration_mode
+  | Exit_configuration_mode
+  | Validate of request_validate
+  | Teardown of request_teardown
+  | Reload_reftree of request_reload_reftree
+  | Load of request_load
+  | Discard of request_discard
+  | Session_changed of request_session_changed
+  | Session_of_pid of request_session_of_pid
+  | Session_exists of request_session_exists
+  | Get_config of request_get_config
+  | Aux_set of request_aux_set
+  | Aux_delete of request_aux_delete
+  | Show_sessions of request_show_sessions
+  | Set_edit_level of request_set_edit_level
+  | Set_edit_level_up of request_set_edit_level_up
+  | Reset_edit_level of request_reset_edit_level
+  | Get_edit_level of request_get_edit_level
+  | Edit_level_root of request_edit_level_root
+  | Config_unsaved of request_config_unsaved
+  | Reference_path_exists of request_reference_path_exists
+  | Get_path_type of request_get_path_type
+  | Get_completion_env of request_get_completion_env
+
+type request_envelope = {
+  token : string option;
+  request : request;
+}
+
+type errnum =
+  | Success 
+  | Fail 
+  | Invalid_path 
+  | Invalid_value 
+  | Commit_in_progress 
+  | Configuration_locked 
+  | Internal_error 
+  | Permission_denied 
+  | Path_already_exists 
+  | Uncommited_changes 
+
+type response = {
+  status : errnum;
+  output : string option;
+  error : string option;
+  warning : string option;
+}
+
+
+(** {2 Basic values} *)
+
+val default_request_config_format : unit -> request_config_format
+(** [default_request_config_format ()] is the default value for type [request_config_format] *)
+
+val default_request_output_format : unit -> request_output_format
+(** [default_request_output_format ()] is the default value for type [request_output_format] *)
+
+val default_request_prompt : unit
+(** [default_request_prompt ()] is the default value for type [request_prompt] *)
+
+val default_request_setup_session : 
+  ?client_pid:int32 ->
+  ?client_application:string option ->
+  ?on_behalf_of:int32 option ->
+  ?client_user:string option ->
+  ?client_sudo_user:string option ->
+  unit ->
+  request_setup_session
+(** [default_request_setup_session ()] is the default value for type [request_setup_session] *)
+
+val default_request_session_of_pid : 
+  ?client_pid:int32 ->
+  unit ->
+  request_session_of_pid
+(** [default_request_session_of_pid ()] is the default value for type [request_session_of_pid] *)
+
+val default_request_session_exists : 
+  ?dummy:int32 option ->
+  unit ->
+  request_session_exists
+(** [default_request_session_exists ()] is the default value for type [request_session_exists] *)
+
+val default_request_get_config : 
+  ?dummy:int32 option ->
+  unit ->
+  request_get_config
+(** [default_request_get_config ()] is the default value for type [request_get_config] *)
+
+val default_request_teardown : 
+  ?on_behalf_of:int32 option ->
+  unit ->
+  request_teardown
+(** [default_request_teardown ()] is the default value for type [request_teardown] *)
+
+val default_request_validate : 
+  ?path:string list ->
+  ?output_format:request_output_format option ->
+  unit ->
+  request_validate
+(** [default_request_validate ()] is the default value for type [request_validate] *)
+
+val default_request_set : 
+  ?path:string list ->
+  unit ->
+  request_set
+(** [default_request_set ()] is the default value for type [request_set] *)
+
+val default_request_delete : 
+  ?path:string list ->
+  unit ->
+  request_delete
+(** [default_request_delete ()] is the default value for type [request_delete] *)
+
+val default_request_aux_set : 
+  ?path:string list ->
+  ?script_name:string ->
+  ?tag_value:string option ->
+  unit ->
+  request_aux_set
+(** [default_request_aux_set ()] is the default value for type [request_aux_set] *)
+
+val default_request_aux_delete : 
+  ?path:string list ->
+  ?script_name:string ->
+  ?tag_value:string option ->
+  unit ->
+  request_aux_delete
+(** [default_request_aux_delete ()] is the default value for type [request_aux_delete] *)
+
+val default_request_discard : 
+  ?dummy:int32 option ->
+  unit ->
+  request_discard
+(** [default_request_discard ()] is the default value for type [request_discard] *)
+
+val default_request_session_changed : 
+  ?dummy:int32 option ->
+  unit ->
+  request_session_changed
+(** [default_request_session_changed ()] is the default value for type [request_session_changed] *)
+
+val default_request_copy : 
+  ?source:string list ->
+  ?destination:string list ->
+  unit ->
+  request_copy
+(** [default_request_copy ()] is the default value for type [request_copy] *)
+
+val default_request_rename : 
+  ?source:string list ->
+  ?destination:string list ->
+  unit ->
+  request_rename
+(** [default_request_rename ()] is the default value for type [request_rename] *)
+
+val default_request_comment : 
+  ?path:string list ->
+  ?comment:string ->
+  unit ->
+  request_comment
+(** [default_request_comment ()] is the default value for type [request_comment] *)
+
+val default_request_commit : 
+  ?confirm:bool option ->
+  ?confirm_timeout:int32 option ->
+  ?comment:string option ->
+  ?dry_run:bool option ->
+  unit ->
+  request_commit
+(** [default_request_commit ()] is the default value for type [request_commit] *)
+
+val default_request_rollback : 
+  ?revision:int32 ->
+  unit ->
+  request_rollback
+(** [default_request_rollback ()] is the default value for type [request_rollback] *)
+
+val default_request_load : 
+  ?location:string ->
+  ?cached:bool ->
+  ?format:request_config_format option ->
+  unit ->
+  request_load
+(** [default_request_load ()] is the default value for type [request_load] *)
+
+val default_request_merge : 
+  ?location:string ->
+  ?destructive:bool ->
+  ?format:request_config_format option ->
+  unit ->
+  request_merge
+(** [default_request_merge ()] is the default value for type [request_merge] *)
+
+val default_request_save : 
+  ?location:string ->
+  ?format:request_config_format option ->
+  unit ->
+  request_save
+(** [default_request_save ()] is the default value for type [request_save] *)
+
+val default_request_show_config : 
+  ?path:string list ->
+  ?format:request_config_format option ->
+  unit ->
+  request_show_config
+(** [default_request_show_config ()] is the default value for type [request_show_config] *)
+
+val default_request_exists : 
+  ?path:string list ->
+  unit ->
+  request_exists
+(** [default_request_exists ()] is the default value for type [request_exists] *)
+
+val default_request_get_value : 
+  ?path:string list ->
+  ?output_format:request_output_format option ->
+  unit ->
+  request_get_value
+(** [default_request_get_value ()] is the default value for type [request_get_value] *)
+
+val default_request_get_values : 
+  ?path:string list ->
+  ?output_format:request_output_format option ->
+  unit ->
+  request_get_values
+(** [default_request_get_values ()] is the default value for type [request_get_values] *)
+
+val default_request_list_children : 
+  ?path:string list ->
+  ?output_format:request_output_format option ->
+  unit ->
+  request_list_children
+(** [default_request_list_children ()] is the default value for type [request_list_children] *)
+
+val default_request_run_op_mode : 
+  ?path:string list ->
+  ?output_format:request_output_format option ->
+  unit ->
+  request_run_op_mode
+(** [default_request_run_op_mode ()] is the default value for type [request_run_op_mode] *)
+
+val default_request_confirm : unit
+(** [default_request_confirm ()] is the default value for type [request_confirm] *)
+
+val default_request_enter_configuration_mode : 
+  ?exclusive:bool ->
+  ?override_exclusive:bool ->
+  unit ->
+  request_enter_configuration_mode
+(** [default_request_enter_configuration_mode ()] is the default value for type [request_enter_configuration_mode] *)
+
+val default_request_exit_configuration_mode : unit
+(** [default_request_exit_configuration_mode ()] is the default value for type [request_exit_configuration_mode] *)
+
+val default_request_reload_reftree : 
+  ?on_behalf_of:int32 option ->
+  unit ->
+  request_reload_reftree
+(** [default_request_reload_reftree ()] is the default value for type [request_reload_reftree] *)
+
+val default_request_show_sessions : 
+  ?exclude_self:bool ->
+  ?exclude_other:bool ->
+  unit ->
+  request_show_sessions
+(** [default_request_show_sessions ()] is the default value for type [request_show_sessions] *)
+
+val default_request_set_edit_level : 
+  ?path:string list ->
+  unit ->
+  request_set_edit_level
+(** [default_request_set_edit_level ()] is the default value for type [request_set_edit_level] *)
+
+val default_request_set_edit_level_up : 
+  ?dummy:int32 option ->
+  unit ->
+  request_set_edit_level_up
+(** [default_request_set_edit_level_up ()] is the default value for type [request_set_edit_level_up] *)
+
+val default_request_reset_edit_level : 
+  ?dummy:int32 option ->
+  unit ->
+  request_reset_edit_level
+(** [default_request_reset_edit_level ()] is the default value for type [request_reset_edit_level] *)
+
+val default_request_get_edit_level : 
+  ?dummy:int32 option ->
+  unit ->
+  request_get_edit_level
+(** [default_request_get_edit_level ()] is the default value for type [request_get_edit_level] *)
+
+val default_request_edit_level_root : 
+  ?dummy:int32 option ->
+  unit ->
+  request_edit_level_root
+(** [default_request_edit_level_root ()] is the default value for type [request_edit_level_root] *)
+
+val default_request_config_unsaved : 
+  ?file:string option ->
+  unit ->
+  request_config_unsaved
+(** [default_request_config_unsaved ()] is the default value for type [request_config_unsaved] *)
+
+val default_request_reference_path_exists : 
+  ?path:string list ->
+  unit ->
+  request_reference_path_exists
+(** [default_request_reference_path_exists ()] is the default value for type [request_reference_path_exists] *)
+
+val default_request_get_path_type : 
+  ?path:string list ->
+  ?legacy_format:bool ->
+  unit ->
+  request_get_path_type
+(** [default_request_get_path_type ()] is the default value for type [request_get_path_type] *)
+
+val default_request_get_completion_env : 
+  ?path:string list ->
+  ?legacy_format:bool ->
+  unit ->
+  request_get_completion_env
+(** [default_request_get_completion_env ()] is the default value for type [request_get_completion_env] *)
+
+val default_request : unit -> request
+(** [default_request ()] is the default value for type [request] *)
+
+val default_request_envelope : 
+  ?token:string option ->
+  ?request:request ->
+  unit ->
+  request_envelope
+(** [default_request_envelope ()] is the default value for type [request_envelope] *)
+
+val default_errnum : unit -> errnum
+(** [default_errnum ()] is the default value for type [errnum] *)
+
+val default_response : 
+  ?status:errnum ->
+  ?output:string option ->
+  ?error:string option ->
+  ?warning:string option ->
+  unit ->
+  response
+(** [default_response ()] is the default value for type [response] *)
+
+
+(** {2 Formatters} *)
+
+val pp_request_config_format : Format.formatter -> request_config_format -> unit 
+(** [pp_request_config_format v] formats v *)
+
+val pp_request_output_format : Format.formatter -> request_output_format -> unit 
+(** [pp_request_output_format v] formats v *)
+
+val pp_request_prompt : Format.formatter -> request_prompt -> unit 
+(** [pp_request_prompt v] formats v *)
+
+val pp_request_setup_session : Format.formatter -> request_setup_session -> unit 
+(** [pp_request_setup_session v] formats v *)
+
+val pp_request_session_of_pid : Format.formatter -> request_session_of_pid -> unit 
+(** [pp_request_session_of_pid v] formats v *)
+
+val pp_request_session_exists : Format.formatter -> request_session_exists -> unit 
+(** [pp_request_session_exists v] formats v *)
+
+val pp_request_get_config : Format.formatter -> request_get_config -> unit 
+(** [pp_request_get_config v] formats v *)
+
+val pp_request_teardown : Format.formatter -> request_teardown -> unit 
+(** [pp_request_teardown v] formats v *)
+
+val pp_request_validate : Format.formatter -> request_validate -> unit 
+(** [pp_request_validate v] formats v *)
+
+val pp_request_set : Format.formatter -> request_set -> unit 
+(** [pp_request_set v] formats v *)
+
+val pp_request_delete : Format.formatter -> request_delete -> unit 
+(** [pp_request_delete v] formats v *)
+
+val pp_request_aux_set : Format.formatter -> request_aux_set -> unit 
+(** [pp_request_aux_set v] formats v *)
+
+val pp_request_aux_delete : Format.formatter -> request_aux_delete -> unit 
+(** [pp_request_aux_delete v] formats v *)
+
+val pp_request_discard : Format.formatter -> request_discard -> unit 
+(** [pp_request_discard v] formats v *)
+
+val pp_request_session_changed : Format.formatter -> request_session_changed -> unit 
+(** [pp_request_session_changed v] formats v *)
+
+val pp_request_copy : Format.formatter -> request_copy -> unit 
+(** [pp_request_copy v] formats v *)
+
+val pp_request_rename : Format.formatter -> request_rename -> unit 
+(** [pp_request_rename v] formats v *)
+
+val pp_request_comment : Format.formatter -> request_comment -> unit 
+(** [pp_request_comment v] formats v *)
+
+val pp_request_commit : Format.formatter -> request_commit -> unit 
+(** [pp_request_commit v] formats v *)
+
+val pp_request_rollback : Format.formatter -> request_rollback -> unit 
+(** [pp_request_rollback v] formats v *)
+
+val pp_request_load : Format.formatter -> request_load -> unit 
+(** [pp_request_load v] formats v *)
+
+val pp_request_merge : Format.formatter -> request_merge -> unit 
+(** [pp_request_merge v] formats v *)
+
+val pp_request_save : Format.formatter -> request_save -> unit 
+(** [pp_request_save v] formats v *)
+
+val pp_request_show_config : Format.formatter -> request_show_config -> unit 
+(** [pp_request_show_config v] formats v *)
+
+val pp_request_exists : Format.formatter -> request_exists -> unit 
+(** [pp_request_exists v] formats v *)
+
+val pp_request_get_value : Format.formatter -> request_get_value -> unit 
+(** [pp_request_get_value v] formats v *)
+
+val pp_request_get_values : Format.formatter -> request_get_values -> unit 
+(** [pp_request_get_values v] formats v *)
+
+val pp_request_list_children : Format.formatter -> request_list_children -> unit 
+(** [pp_request_list_children v] formats v *)
+
+val pp_request_run_op_mode : Format.formatter -> request_run_op_mode -> unit 
+(** [pp_request_run_op_mode v] formats v *)
+
+val pp_request_confirm : Format.formatter -> request_confirm -> unit 
+(** [pp_request_confirm v] formats v *)
+
+val pp_request_enter_configuration_mode : Format.formatter -> request_enter_configuration_mode -> unit 
+(** [pp_request_enter_configuration_mode v] formats v *)
+
+val pp_request_exit_configuration_mode : Format.formatter -> request_exit_configuration_mode -> unit 
+(** [pp_request_exit_configuration_mode v] formats v *)
+
+val pp_request_reload_reftree : Format.formatter -> request_reload_reftree -> unit 
+(** [pp_request_reload_reftree v] formats v *)
+
+val pp_request_show_sessions : Format.formatter -> request_show_sessions -> unit 
+(** [pp_request_show_sessions v] formats v *)
+
+val pp_request_set_edit_level : Format.formatter -> request_set_edit_level -> unit 
+(** [pp_request_set_edit_level v] formats v *)
+
+val pp_request_set_edit_level_up : Format.formatter -> request_set_edit_level_up -> unit 
+(** [pp_request_set_edit_level_up v] formats v *)
+
+val pp_request_reset_edit_level : Format.formatter -> request_reset_edit_level -> unit 
+(** [pp_request_reset_edit_level v] formats v *)
+
+val pp_request_get_edit_level : Format.formatter -> request_get_edit_level -> unit 
+(** [pp_request_get_edit_level v] formats v *)
+
+val pp_request_edit_level_root : Format.formatter -> request_edit_level_root -> unit 
+(** [pp_request_edit_level_root v] formats v *)
+
+val pp_request_config_unsaved : Format.formatter -> request_config_unsaved -> unit 
+(** [pp_request_config_unsaved v] formats v *)
+
+val pp_request_reference_path_exists : Format.formatter -> request_reference_path_exists -> unit 
+(** [pp_request_reference_path_exists v] formats v *)
+
+val pp_request_get_path_type : Format.formatter -> request_get_path_type -> unit 
+(** [pp_request_get_path_type v] formats v *)
+
+val pp_request_get_completion_env : Format.formatter -> request_get_completion_env -> unit 
+(** [pp_request_get_completion_env v] formats v *)
+
+val pp_request : Format.formatter -> request -> unit 
+(** [pp_request v] formats v *)
+
+val pp_request_envelope : Format.formatter -> request_envelope -> unit 
+(** [pp_request_envelope v] formats v *)
+
+val pp_errnum : Format.formatter -> errnum -> unit 
+(** [pp_errnum v] formats v *)
+
+val pp_response : Format.formatter -> response -> unit 
+(** [pp_response v] formats v *)
+
+
+(** {2 Protobuf Encoding} *)
+
+val encode_pb_request_config_format : request_config_format -> Pbrt.Encoder.t -> unit
+(** [encode_pb_request_config_format v encoder] encodes [v] with the given [encoder] *)
+
+val encode_pb_request_output_format : request_output_format -> Pbrt.Encoder.t -> unit
+(** [encode_pb_request_output_format v encoder] encodes [v] with the given [encoder] *)
+
+val encode_pb_request_prompt : request_prompt -> Pbrt.Encoder.t -> unit
+(** [encode_pb_request_prompt v encoder] encodes [v] with the given [encoder] *)
+
+val encode_pb_request_setup_session : request_setup_session -> Pbrt.Encoder.t -> unit
+(** [encode_pb_request_setup_session v encoder] encodes [v] with the given [encoder] *)
+
+val encode_pb_request_session_of_pid : request_session_of_pid -> Pbrt.Encoder.t -> unit
+(** [encode_pb_request_session_of_pid v encoder] encodes [v] with the given [encoder] *)
+
+val encode_pb_request_session_exists : request_session_exists -> Pbrt.Encoder.t -> unit
+(** [encode_pb_request_session_exists v encoder] encodes [v] with the given [encoder] *)
+
+val encode_pb_request_get_config : request_get_config -> Pbrt.Encoder.t -> unit
+(** [encode_pb_request_get_config v encoder] encodes [v] with the given [encoder] *)
+
+val encode_pb_request_teardown : request_teardown -> Pbrt.Encoder.t -> unit
+(** [encode_pb_request_teardown v encoder] encodes [v] with the given [encoder] *)
+
+val encode_pb_request_validate : request_validate -> Pbrt.Encoder.t -> unit
+(** [encode_pb_request_validate v encoder] encodes [v] with the given [encoder] *)
+
+val encode_pb_request_set : request_set -> Pbrt.Encoder.t -> unit
+(** [encode_pb_request_set v encoder] encodes [v] with the given [encoder] *)
+
+val encode_pb_request_delete : request_delete -> Pbrt.Encoder.t -> unit
+(** [encode_pb_request_delete v encoder] encodes [v] with the given [encoder] *)
+
+val encode_pb_request_aux_set : request_aux_set -> Pbrt.Encoder.t -> unit
+(** [encode_pb_request_aux_set v encoder] encodes [v] with the given [encoder] *)
+
+val encode_pb_request_aux_delete : request_aux_delete -> Pbrt.Encoder.t -> unit
+(** [encode_pb_request_aux_delete v encoder] encodes [v] with the given [encoder] *)
+
+val encode_pb_request_discard : request_discard -> Pbrt.Encoder.t -> unit
+(** [encode_pb_request_discard v encoder] encodes [v] with the given [encoder] *)
+
+val encode_pb_request_session_changed : request_session_changed -> Pbrt.Encoder.t -> unit
+(** [encode_pb_request_session_changed v encoder] encodes [v] with the given [encoder] *)
+
+val encode_pb_request_copy : request_copy -> Pbrt.Encoder.t -> unit
+(** [encode_pb_request_copy v encoder] encodes [v] with the given [encoder] *)
+
+val encode_pb_request_rename : request_rename -> Pbrt.Encoder.t -> unit
+(** [encode_pb_request_rename v encoder] encodes [v] with the given [encoder] *)
+
+val encode_pb_request_comment : request_comment -> Pbrt.Encoder.t -> unit
+(** [encode_pb_request_comment v encoder] encodes [v] with the given [encoder] *)
+
+val encode_pb_request_commit : request_commit -> Pbrt.Encoder.t -> unit
+(** [encode_pb_request_commit v encoder] encodes [v] with the given [encoder] *)
+
+val encode_pb_request_rollback : request_rollback -> Pbrt.Encoder.t -> unit
+(** [encode_pb_request_rollback v encoder] encodes [v] with the given [encoder] *)
+
+val encode_pb_request_load : request_load -> Pbrt.Encoder.t -> unit
+(** [encode_pb_request_load v encoder] encodes [v] with the given [encoder] *)
+
+val encode_pb_request_merge : request_merge -> Pbrt.Encoder.t -> unit
+(** [encode_pb_request_merge v encoder] encodes [v] with the given [encoder] *)
+
+val encode_pb_request_save : request_save -> Pbrt.Encoder.t -> unit
+(** [encode_pb_request_save v encoder] encodes [v] with the given [encoder] *)
+
+val encode_pb_request_show_config : request_show_config -> Pbrt.Encoder.t -> unit
+(** [encode_pb_request_show_config v encoder] encodes [v] with the given [encoder] *)
+
+val encode_pb_request_exists : request_exists -> Pbrt.Encoder.t -> unit
+(** [encode_pb_request_exists v encoder] encodes [v] with the given [encoder] *)
+
+val encode_pb_request_get_value : request_get_value -> Pbrt.Encoder.t -> unit
+(** [encode_pb_request_get_value v encoder] encodes [v] with the given [encoder] *)
+
+val encode_pb_request_get_values : request_get_values -> Pbrt.Encoder.t -> unit
+(** [encode_pb_request_get_values v encoder] encodes [v] with the given [encoder] *)
+
+val encode_pb_request_list_children : request_list_children -> Pbrt.Encoder.t -> unit
+(** [encode_pb_request_list_children v encoder] encodes [v] with the given [encoder] *)
+
+val encode_pb_request_run_op_mode : request_run_op_mode -> Pbrt.Encoder.t -> unit
+(** [encode_pb_request_run_op_mode v encoder] encodes [v] with the given [encoder] *)
+
+val encode_pb_request_confirm : request_confirm -> Pbrt.Encoder.t -> unit
+(** [encode_pb_request_confirm v encoder] encodes [v] with the given [encoder] *)
+
+val encode_pb_request_enter_configuration_mode : request_enter_configuration_mode -> Pbrt.Encoder.t -> unit
+(** [encode_pb_request_enter_configuration_mode v encoder] encodes [v] with the given [encoder] *)
+
+val encode_pb_request_exit_configuration_mode : request_exit_configuration_mode -> Pbrt.Encoder.t -> unit
+(** [encode_pb_request_exit_configuration_mode v encoder] encodes [v] with the given [encoder] *)
+
+val encode_pb_request_reload_reftree : request_reload_reftree -> Pbrt.Encoder.t -> unit
+(** [encode_pb_request_reload_reftree v encoder] encodes [v] with the given [encoder] *)
+
+val encode_pb_request_show_sessions : request_show_sessions -> Pbrt.Encoder.t -> unit
+(** [encode_pb_request_show_sessions v encoder] encodes [v] with the given [encoder] *)
+
+val encode_pb_request_set_edit_level : request_set_edit_level -> Pbrt.Encoder.t -> unit
+(** [encode_pb_request_set_edit_level v encoder] encodes [v] with the given [encoder] *)
+
+val encode_pb_request_set_edit_level_up : request_set_edit_level_up -> Pbrt.Encoder.t -> unit
+(** [encode_pb_request_set_edit_level_up v encoder] encodes [v] with the given [encoder] *)
+
+val encode_pb_request_reset_edit_level : request_reset_edit_level -> Pbrt.Encoder.t -> unit
+(** [encode_pb_request_reset_edit_level v encoder] encodes [v] with the given [encoder] *)
+
+val encode_pb_request_get_edit_level : request_get_edit_level -> Pbrt.Encoder.t -> unit
+(** [encode_pb_request_get_edit_level v encoder] encodes [v] with the given [encoder] *)
+
+val encode_pb_request_edit_level_root : request_edit_level_root -> Pbrt.Encoder.t -> unit
+(** [encode_pb_request_edit_level_root v encoder] encodes [v] with the given [encoder] *)
+
+val encode_pb_request_config_unsaved : request_config_unsaved -> Pbrt.Encoder.t -> unit
+(** [encode_pb_request_config_unsaved v encoder] encodes [v] with the given [encoder] *)
+
+val encode_pb_request_reference_path_exists : request_reference_path_exists -> Pbrt.Encoder.t -> unit
+(** [encode_pb_request_reference_path_exists v encoder] encodes [v] with the given [encoder] *)
+
+val encode_pb_request_get_path_type : request_get_path_type -> Pbrt.Encoder.t -> unit
+(** [encode_pb_request_get_path_type v encoder] encodes [v] with the given [encoder] *)
+
+val encode_pb_request_get_completion_env : request_get_completion_env -> Pbrt.Encoder.t -> unit
+(** [encode_pb_request_get_completion_env v encoder] encodes [v] with the given [encoder] *)
+
+val encode_pb_request : request -> Pbrt.Encoder.t -> unit
+(** [encode_pb_request v encoder] encodes [v] with the given [encoder] *)
+
+val encode_pb_request_envelope : request_envelope -> Pbrt.Encoder.t -> unit
+(** [encode_pb_request_envelope v encoder] encodes [v] with the given [encoder] *)
+
+val encode_pb_errnum : errnum -> Pbrt.Encoder.t -> unit
+(** [encode_pb_errnum v encoder] encodes [v] with the given [encoder] *)
+
+val encode_pb_response : response -> Pbrt.Encoder.t -> unit
+(** [encode_pb_response v encoder] encodes [v] with the given [encoder] *)
+
+
+(** {2 Protobuf Decoding} *)
+
+val decode_pb_request_config_format : Pbrt.Decoder.t -> request_config_format
+(** [decode_pb_request_config_format decoder] decodes a [request_config_format] binary value from [decoder] *)
+
+val decode_pb_request_output_format : Pbrt.Decoder.t -> request_output_format
+(** [decode_pb_request_output_format decoder] decodes a [request_output_format] binary value from [decoder] *)
+
+val decode_pb_request_prompt : Pbrt.Decoder.t -> request_prompt
+(** [decode_pb_request_prompt decoder] decodes a [request_prompt] binary value from [decoder] *)
+
+val decode_pb_request_setup_session : Pbrt.Decoder.t -> request_setup_session
+(** [decode_pb_request_setup_session decoder] decodes a [request_setup_session] binary value from [decoder] *)
+
+val decode_pb_request_session_of_pid : Pbrt.Decoder.t -> request_session_of_pid
+(** [decode_pb_request_session_of_pid decoder] decodes a [request_session_of_pid] binary value from [decoder] *)
+
+val decode_pb_request_session_exists : Pbrt.Decoder.t -> request_session_exists
+(** [decode_pb_request_session_exists decoder] decodes a [request_session_exists] binary value from [decoder] *)
+
+val decode_pb_request_get_config : Pbrt.Decoder.t -> request_get_config
+(** [decode_pb_request_get_config decoder] decodes a [request_get_config] binary value from [decoder] *)
+
+val decode_pb_request_teardown : Pbrt.Decoder.t -> request_teardown
+(** [decode_pb_request_teardown decoder] decodes a [request_teardown] binary value from [decoder] *)
+
+val decode_pb_request_validate : Pbrt.Decoder.t -> request_validate
+(** [decode_pb_request_validate decoder] decodes a [request_validate] binary value from [decoder] *)
+
+val decode_pb_request_set : Pbrt.Decoder.t -> request_set
+(** [decode_pb_request_set decoder] decodes a [request_set] binary value from [decoder] *)
+
+val decode_pb_request_delete : Pbrt.Decoder.t -> request_delete
+(** [decode_pb_request_delete decoder] decodes a [request_delete] binary value from [decoder] *)
+
+val decode_pb_request_aux_set : Pbrt.Decoder.t -> request_aux_set
+(** [decode_pb_request_aux_set decoder] decodes a [request_aux_set] binary value from [decoder] *)
+
+val decode_pb_request_aux_delete : Pbrt.Decoder.t -> request_aux_delete
+(** [decode_pb_request_aux_delete decoder] decodes a [request_aux_delete] binary value from [decoder] *)
+
+val decode_pb_request_discard : Pbrt.Decoder.t -> request_discard
+(** [decode_pb_request_discard decoder] decodes a [request_discard] binary value from [decoder] *)
+
+val decode_pb_request_session_changed : Pbrt.Decoder.t -> request_session_changed
+(** [decode_pb_request_session_changed decoder] decodes a [request_session_changed] binary value from [decoder] *)
+
+val decode_pb_request_copy : Pbrt.Decoder.t -> request_copy
+(** [decode_pb_request_copy decoder] decodes a [request_copy] binary value from [decoder] *)
+
+val decode_pb_request_rename : Pbrt.Decoder.t -> request_rename
+(** [decode_pb_request_rename decoder] decodes a [request_rename] binary value from [decoder] *)
+
+val decode_pb_request_comment : Pbrt.Decoder.t -> request_comment
+(** [decode_pb_request_comment decoder] decodes a [request_comment] binary value from [decoder] *)
+
+val decode_pb_request_commit : Pbrt.Decoder.t -> request_commit
+(** [decode_pb_request_commit decoder] decodes a [request_commit] binary value from [decoder] *)
+
+val decode_pb_request_rollback : Pbrt.Decoder.t -> request_rollback
+(** [decode_pb_request_rollback decoder] decodes a [request_rollback] binary value from [decoder] *)
+
+val decode_pb_request_load : Pbrt.Decoder.t -> request_load
+(** [decode_pb_request_load decoder] decodes a [request_load] binary value from [decoder] *)
+
+val decode_pb_request_merge : Pbrt.Decoder.t -> request_merge
+(** [decode_pb_request_merge decoder] decodes a [request_merge] binary value from [decoder] *)
+
+val decode_pb_request_save : Pbrt.Decoder.t -> request_save
+(** [decode_pb_request_save decoder] decodes a [request_save] binary value from [decoder] *)
+
+val decode_pb_request_show_config : Pbrt.Decoder.t -> request_show_config
+(** [decode_pb_request_show_config decoder] decodes a [request_show_config] binary value from [decoder] *)
+
+val decode_pb_request_exists : Pbrt.Decoder.t -> request_exists
+(** [decode_pb_request_exists decoder] decodes a [request_exists] binary value from [decoder] *)
+
+val decode_pb_request_get_value : Pbrt.Decoder.t -> request_get_value
+(** [decode_pb_request_get_value decoder] decodes a [request_get_value] binary value from [decoder] *)
+
+val decode_pb_request_get_values : Pbrt.Decoder.t -> request_get_values
+(** [decode_pb_request_get_values decoder] decodes a [request_get_values] binary value from [decoder] *)
+
+val decode_pb_request_list_children : Pbrt.Decoder.t -> request_list_children
+(** [decode_pb_request_list_children decoder] decodes a [request_list_children] binary value from [decoder] *)
+
+val decode_pb_request_run_op_mode : Pbrt.Decoder.t -> request_run_op_mode
+(** [decode_pb_request_run_op_mode decoder] decodes a [request_run_op_mode] binary value from [decoder] *)
+
+val decode_pb_request_confirm : Pbrt.Decoder.t -> request_confirm
+(** [decode_pb_request_confirm decoder] decodes a [request_confirm] binary value from [decoder] *)
+
+val decode_pb_request_enter_configuration_mode : Pbrt.Decoder.t -> request_enter_configuration_mode
+(** [decode_pb_request_enter_configuration_mode decoder] decodes a [request_enter_configuration_mode] binary value from [decoder] *)
+
+val decode_pb_request_exit_configuration_mode : Pbrt.Decoder.t -> request_exit_configuration_mode
+(** [decode_pb_request_exit_configuration_mode decoder] decodes a [request_exit_configuration_mode] binary value from [decoder] *)
+
+val decode_pb_request_reload_reftree : Pbrt.Decoder.t -> request_reload_reftree
+(** [decode_pb_request_reload_reftree decoder] decodes a [request_reload_reftree] binary value from [decoder] *)
+
+val decode_pb_request_show_sessions : Pbrt.Decoder.t -> request_show_sessions
+(** [decode_pb_request_show_sessions decoder] decodes a [request_show_sessions] binary value from [decoder] *)
+
+val decode_pb_request_set_edit_level : Pbrt.Decoder.t -> request_set_edit_level
+(** [decode_pb_request_set_edit_level decoder] decodes a [request_set_edit_level] binary value from [decoder] *)
+
+val decode_pb_request_set_edit_level_up : Pbrt.Decoder.t -> request_set_edit_level_up
+(** [decode_pb_request_set_edit_level_up decoder] decodes a [request_set_edit_level_up] binary value from [decoder] *)
+
+val decode_pb_request_reset_edit_level : Pbrt.Decoder.t -> request_reset_edit_level
+(** [decode_pb_request_reset_edit_level decoder] decodes a [request_reset_edit_level] binary value from [decoder] *)
+
+val decode_pb_request_get_edit_level : Pbrt.Decoder.t -> request_get_edit_level
+(** [decode_pb_request_get_edit_level decoder] decodes a [request_get_edit_level] binary value from [decoder] *)
+
+val decode_pb_request_edit_level_root : Pbrt.Decoder.t -> request_edit_level_root
+(** [decode_pb_request_edit_level_root decoder] decodes a [request_edit_level_root] binary value from [decoder] *)
+
+val decode_pb_request_config_unsaved : Pbrt.Decoder.t -> request_config_unsaved
+(** [decode_pb_request_config_unsaved decoder] decodes a [request_config_unsaved] binary value from [decoder] *)
+
+val decode_pb_request_reference_path_exists : Pbrt.Decoder.t -> request_reference_path_exists
+(** [decode_pb_request_reference_path_exists decoder] decodes a [request_reference_path_exists] binary value from [decoder] *)
+
+val decode_pb_request_get_path_type : Pbrt.Decoder.t -> request_get_path_type
+(** [decode_pb_request_get_path_type decoder] decodes a [request_get_path_type] binary value from [decoder] *)
+
+val decode_pb_request_get_completion_env : Pbrt.Decoder.t -> request_get_completion_env
+(** [decode_pb_request_get_completion_env decoder] decodes a [request_get_completion_env] binary value from [decoder] *)
+
+val decode_pb_request : Pbrt.Decoder.t -> request
+(** [decode_pb_request decoder] decodes a [request] binary value from [decoder] *)
+
+val decode_pb_request_envelope : Pbrt.Decoder.t -> request_envelope
+(** [decode_pb_request_envelope decoder] decodes a [request_envelope] binary value from [decoder] *)
+
+val decode_pb_errnum : Pbrt.Decoder.t -> errnum
+(** [decode_pb_errnum decoder] decodes a [errnum] binary value from [decoder] *)
+
+val decode_pb_response : Pbrt.Decoder.t -> response
+(** [decode_pb_response decoder] decodes a [response] binary value from [decoder] *)
