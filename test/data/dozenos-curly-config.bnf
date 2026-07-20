@@ -1,0 +1,13 @@
+<start> ::= <nodes> ;
+
+<nodes> ::= 10 <nodes> <node> | <node> ;
+
+<node> ::= <identifier> "{" <innerNodes> "}" ;
+
+<innerNodes> ::= 5 <innerNodes> | <node> | <leafNode> ;
+
+<leafNode> ::= <identifier> <value> ";" ;
+
+<identifier> ::= "foo" | "bar" | "baz" | "quux" | "xyzzy" ;
+
+<value> ::= "192.0.2.1" | "203.0.113.0" | "foobar" | "1000"

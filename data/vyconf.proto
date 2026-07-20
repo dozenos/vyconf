@@ -1,0 +1,272 @@
+message Request {
+  enum ConfigFormat {
+    CURLY = 0;
+    JSON = 1;
+  }
+
+  enum OutputFormat {
+    OutPlain = 0;
+    OutJSON = 1;
+  }
+
+  message Prompt {
+  }
+
+  message SetupSession {
+    required int32 client_pid = 1;
+    optional string client_application = 2;
+    optional int32 on_behalf_of = 3;
+    optional string client_user = 4;
+    optional string client_sudo_user = 5;
+  }
+
+  message SessionOfPid {
+    required int32 client_pid = 1;
+  }
+
+  message SessionExists {
+    optional int32 dummy = 1;
+  }
+
+  message GetConfig {
+    optional int32 dummy = 1;
+  }
+
+  message Teardown {
+    optional int32 on_behalf_of = 1;
+  }
+
+  message Validate {
+    repeated string Path = 1;
+    optional OutputFormat output_format = 2;
+  }
+
+  message Set {
+    repeated string path = 1;
+  }
+
+  message Delete {
+    repeated string path = 1;
+  }
+
+  message AuxSet {
+    repeated string path = 1;
+    required string script_name = 2;
+    optional string tag_value = 3;
+  }
+
+  message AuxDelete {
+    repeated string path = 1;
+    required string script_name = 2;
+    optional string tag_value = 3;
+  }
+
+  message Discard {
+    optional int32 dummy = 1;
+  }
+
+  message SessionChanged {
+    optional int32 dummy = 1;
+  }
+
+  message Copy {
+    repeated string source = 1;
+    repeated string destination = 2;
+  }
+
+  message Rename {
+    repeated string source = 1;
+    repeated string destination = 2;
+  }
+
+  message Comment {
+    repeated string path = 1;
+    required string comment = 2;
+  }
+
+  message Commit {
+    optional bool confirm = 1;
+    optional int32 confirm_timeout = 2;
+    optional string comment = 3;
+    optional bool dry_run = 4;
+  }
+
+  message Rollback {
+    required int32 revision = 1;
+  }
+
+  message Load {
+    required string location = 1;
+    required bool cached = 2;
+    optional ConfigFormat format = 3;
+  }
+
+  message Merge {
+    required string location = 1;
+    required bool destructive = 2;
+    optional ConfigFormat format = 3;
+  }
+
+  message Save {
+    required string location = 1;
+    optional ConfigFormat format = 2;
+  }
+
+  message ShowConfig {
+    repeated string path = 1;
+    optional ConfigFormat format = 2;
+  }
+
+  message Exists {
+    repeated string path = 1;
+  }
+
+  message GetValue {
+    repeated string path = 1;
+    optional OutputFormat output_format = 2;
+  }
+
+  message GetValues {
+    repeated string path = 1;
+    optional OutputFormat output_format = 2;
+  }
+
+  message ListChildren {
+    repeated string path = 1;
+    optional OutputFormat output_format = 2;
+  }
+
+  message RunOpMode {
+    repeated string path = 1;
+    optional OutputFormat output_format = 2;
+  }
+
+  message Confirm {
+  }
+
+  message EnterConfigurationMode {
+    required bool exclusive = 1;
+    required bool override_exclusive = 2;
+  }
+
+  message ExitConfigurationMode {
+  }
+
+  message ReloadReftree {
+    // this is a temporary workaround for a bug with empty messages, and
+    // will be removed when the issue is resolved
+    optional int32 on_behalf_of = 1;
+  }
+
+  message ShowSessions {
+    required bool exclude_self = 1;
+    required bool exclude_other = 2;
+  }
+
+  message SetEditLevel {
+    repeated string path = 1;
+  }
+
+  message SetEditLevelUp {
+    optional int32 dummy = 1;
+  }
+
+  message ResetEditLevel {
+    optional int32 dummy = 1;
+  }
+
+  message GetEditLevel {
+    optional int32 dummy = 1;
+  }
+
+  message EditLevelRoot {
+    optional int32 dummy = 1;
+  }
+
+  message ConfigUnsaved {
+    optional string file = 1;
+  }
+
+  message ReferencePathExists {
+    repeated string path = 1;
+  }
+
+  message GetPathType {
+    repeated string path = 1;
+    required bool legacy_format = 2;
+  }
+
+  message GetCompletionEnv {
+    repeated string path = 1;
+    required bool legacy_format = 2;
+  }
+
+  oneof msg {
+    Prompt prompt = 1;
+    SetupSession setup_session = 2;
+    Set set = 3;
+    Delete delete = 4;
+    Rename rename = 5;
+    Copy copy = 6;
+    Comment comment = 7;
+    Commit commit = 8;
+    Rollback rollback = 9;
+    Merge merge = 10;
+    Save save = 11;
+    ShowConfig show_config = 12;
+    Exists exists = 13;
+    GetValue get_value = 14;
+    GetValues get_values = 15;
+    ListChildren list_children = 16;
+    RunOpMode run_op_mode = 17;
+    Confirm confirm = 18;
+    EnterConfigurationMode enter_configuration_mode = 19;
+    ExitConfigurationMode exit_configuration_mode = 20;
+    Validate validate = 21;
+    Teardown teardown = 22;
+    ReloadReftree reload_reftree = 23;
+    Load load = 24;
+    Discard discard = 25;
+    SessionChanged session_changed = 26;
+    SessionOfPid session_of_pid = 27;
+    SessionExists session_exists = 28;
+    GetConfig get_config = 29;
+    AuxSet aux_set = 30;
+    AuxDelete aux_delete = 31;
+    ShowSessions show_sessions = 32;
+    SetEditLevel set_edit_level = 33;
+    SetEditLevelUp set_edit_level_up = 34;
+    ResetEditLevel reset_edit_level = 35;
+    GetEditLevel get_edit_level = 36;
+    EditLevelRoot edit_level_root = 37;
+    ConfigUnsaved config_unsaved = 38;
+    ReferencePathExists reference_path_exists = 39;
+    GetPathType get_path_type = 40;
+    GetCompletionEnv get_completion_env = 41;
+  }
+}
+
+message RequestEnvelope {
+    optional string token = 1;
+    required Request request = 2;
+}
+
+enum Errnum {
+  SUCCESS = 0;
+  FAIL = 1;
+  INVALID_PATH = 2;
+  INVALID_VALUE = 3;
+  COMMIT_IN_PROGRESS = 4;
+  CONFIGURATION_LOCKED = 5;
+  INTERNAL_ERROR = 6;
+  PERMISSION_DENIED = 7;
+  PATH_ALREADY_EXISTS = 8;
+  UNCOMMITED_CHANGES = 9;
+}
+
+message Response {
+  required Errnum status = 1;
+  optional string output = 2;
+  optional string error = 3;
+  optional string warning = 4;
+}
