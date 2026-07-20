@@ -20,7 +20,7 @@ depends: [
   # emits private record types with presence tracking, which the hand-written
   # call sites cannot construct. Pin to 2.x until the generated code + call
   # sites are migrated to the 3.x API.
-  "ocaml-protoc" {build & >= "3.0"}
+  "ocaml-protoc" {build & < "3.0"}
   "ounit2" {build}
   "dozenos1x-config" {build}
   "lwt" {build & >= "4.1.0"}
