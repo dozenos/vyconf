@@ -1,0 +1,34 @@
+opam-version: "2.0"
+name: "vyconf"
+version: "0.1"
+synopsis: "DozenOS 2.x config file control library"
+description: "An appliance configuration framework"
+maintainer: "Daniil Baturin <daniil@baturin.org>"
+authors: "DozenOS maintainers and contributors <maintainers@dozenos.local>"
+homepage: "https://github.com/dozenos/vyconf"
+bug-reports: "https://phabricator.dozenos.net"
+license: "LGPL-2.1-or-later WITH OCaml-LGPL-linking-exception"
+dev-repo: "git+https://github.com/dozenos/vyconf/"
+build: [
+  ["dune" "subst"] {pinned}
+  ["dune" "build" "-p" name]
+]
+depends: [
+  "menhir" {build}
+  "dune" {build & >= "1.4.0"}
+  "ocaml-protoc" {build & = "3.1.1"}
+  "ounit2" {build}
+  "dozenos1x-config" {build}
+  "lwt" {build & >= "4.1.0"}
+  "lwt_ppx" {build}
+  "lwt_log" {build}
+  "fileutils" {build}
+  "ppx_deriving" {build}
+  "ppx_deriving_yojson" {build}
+  "ocplib-endian" {build}
+  "xml-light" {build}
+  "toml" {build}
+  "sha" {build}
+  "pcre2" {build}
+  "yojson" {build}
+]
